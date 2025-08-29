@@ -23,7 +23,11 @@ import { toast } from "@/hooks/use-toast";
 
 const Scenarios = () => {
   const [selectedInfrastructure, setSelectedInfrastructure] = useState<string | null>(null);
-  const [placedItems, setPlacedItems] = useState<any[]>([]);
+  const [placedItems, setPlacedItems] = useState<Array<{
+    id: number;
+    type: string;
+    position: { x: number; y: number };
+  }>>([]);
   const [isSimulating, setIsSimulating] = useState(false);
 
   const infrastructureTypes = [
