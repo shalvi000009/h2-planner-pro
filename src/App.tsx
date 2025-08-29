@@ -12,6 +12,10 @@ import Login from "./pages/Login";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
+// User/Admin route shells
+import UserApp from "./pages/UserApp";
+import AdminApp from "./pages/AdminApp";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -21,14 +25,24 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Marketing/Home */}
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/map" element={<MapExplorer />} />
+
+          {/* User Panel */}
+          <Route path="/user/*" element={<UserApp />}></Route>
+
+          {/* Admin Panel */}
+          <Route path="/admin/*" element={<AdminApp />}></Route>
+
+          {/* Legacy direct pages (optional) */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/recommendations" element={<Recommendations />} />
           <Route path="/scenarios" element={<Scenarios />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/about" element={<About />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+
+          {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
