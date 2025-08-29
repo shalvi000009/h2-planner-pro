@@ -8,7 +8,6 @@ import MapExplorer from "./pages/MapExplorer";
 import Dashboard from "./pages/Dashboard";
 import Recommendations from "./pages/Recommendations";
 import Scenarios from "./pages/Scenarios";
-import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
@@ -27,7 +26,6 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/recommendations" element={<Recommendations />} />
           <Route path="/scenarios" element={<Scenarios />} />
-          <Route path="/admin" element={<Admin />} />
           <Route path="/login" element={<Login />} />
           <Route path="/about" element={<About />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

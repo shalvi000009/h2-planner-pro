@@ -6,42 +6,42 @@
 
 @layer base {
   :root {
-    /* Core Colors - Energy Theme */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    /* Core Colors - Emerald Theme */
+    --background: 192 39% 12%;
+    --foreground: 150 40% 96%;
 
     /* Card backgrounds with subtle transparency */
-    --card: 217 33% 17%;
-    --card-foreground: 210 40% 98%;
+    --card: 190 35% 15%;
+    --card-foreground: 150 40% 96%;
 
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 192 39% 12%;
+    --popover-foreground: 150 40% 96%;
 
-    /* Primary - Green Energy */
-    --primary: 142 76% 36%;
+    /* Primary - Dark Teal */
+    --primary: 192 39% 22%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 142 76% 56%;
+    --primary-glow: 192 39% 35%;
 
-    /* Secondary - Hydrogen Blue */
-    --secondary: 201 96% 32%;
+    /* Secondary - Emerald Green */
+    --secondary: 134 31% 55%;
     --secondary-foreground: 0 0% 100%;
-    --secondary-glow: 201 96% 52%;
+    --secondary-glow: 134 31% 65%;
 
     /* Muted for subtle elements */
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 190 30% 18%;
+    --muted-foreground: 180 20% 65%;
 
-    /* Accent - Energy Yellow */
-    --accent: 48 96% 53%;
-    --accent-foreground: 222 47% 11%;
+    /* Accent - Light Green */
+    --accent: 134 31% 70%;
+    --accent-foreground: 192 39% 12%;
 
     /* System colors */
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217 33% 20%;
-    --input: 217 33% 20%;
-    --ring: 142 76% 36%;
+    --border: 190 25% 20%;
+    --input: 190 25% 20%;
+    --ring: 192 39% 35%;
 
     --radius: 0.75rem;
 
@@ -49,8 +49,8 @@
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
     --gradient-energy: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
-    --gradient-hero: linear-gradient(180deg, hsl(222 47% 11%), hsl(217 33% 17%));
-    --gradient-card: linear-gradient(180deg, hsl(217 33% 17% / 0.8), hsl(217 33% 15% / 0.9));
+    --gradient-hero: linear-gradient(180deg, hsl(192 39% 12%), hsl(190 35% 15%));
+    --gradient-card: linear-gradient(180deg, hsl(190 35% 15% / 0.8), hsl(190 35% 13% / 0.9));
     
     /* Shadows */
     --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.3);
@@ -62,11 +62,11 @@
     --animation-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
     /* Chart colors */
-    --chart-1: 142 76% 36%;
-    --chart-2: 201 96% 32%;
-    --chart-3: 48 96% 53%;
-    --chart-4: 285 60% 50%;
-    --chart-5: 15 80% 50%;
+    --chart-1: 192 39% 22%;
+    --chart-2: 134 31% 55%;
+    --chart-3: 134 31% 70%;
+    --chart-4: 180 35% 50%;
+    --chart-5: 160 30% 45%;
   }
 
   .light {
