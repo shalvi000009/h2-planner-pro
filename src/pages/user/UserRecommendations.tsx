@@ -255,7 +255,7 @@ const UserRecommendations: React.FC = () => {
                   <span className="text-sm text-muted-foreground">Sort by:</span>
                   <select 
                     value={sortBy} 
-                    onChange={(e) => setSortBy(e.target.value as any)}
+                    onChange={(e) => setSortBy(e.target.value as 'score' | 'capacity' | 'cost')}
                     className="bg-background border border-border rounded px-2 py-1 text-sm"
                   >
                     <option value="score">Score</option>
