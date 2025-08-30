@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
-import { Icon } from 'leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
+import { Icon, Marker as LeafletMarker } from 'leaflet';
 import type { LatLngExpression } from 'leaflet';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import MapLayers from '@/components/ui/Maplayer';
-// Demo data and types for map features
-const hydrogenAssets = [] as any[];
-const renewableSources = [] as any[];
-const demandCenters = [] as any[];
-const transportRoutes = [] as any[];
-
-type HydrogenAsset = any;
-type RenewableSource = any;
-type DemandCenter = any;
-type TransportRoute = any;
+import {
+  hydrogenAssets,
+  renewableSources,
+  demandCenters,
+  transportRoutes,
+  type HydrogenAsset,
+  type RenewableSource,
+  type DemandCenter,
+  type TransportRoute,
+} from '@/data/mapData';
 import 'leaflet/dist/leaflet.css';
 
 // Fix for default markers in react-leaflet
@@ -97,6 +97,29 @@ const MapExplorer = () => {
     }
   };
 
+  // Read query params and center/mark map accordingly
+  const MapQueryCenter = () => {
+    const map = useMap();
+    useEffect(() => {
+      const params = new URLSearchParams(window.location.search);
+      const lat = parseFloat(params.get('lat') || '');
+      const lng = parseFloat(params.get('lng') || '');
+      const label = params.get('label') || 'Selected Location';
+      if (!isNaN(lat) && !isNaN(lng)) {
+        const pos: LatLngExpression = [lat, lng];
+        map.setView(pos, 10, { animate: true });
+        // Add a one-time marker layer
+        const tempMarker = new LeafletMarker(pos, { icon: icons.hydrogen.plant });
+        tempMarker.bindPopup(`<b>${label}</b>`);
+        tempMarker.addTo(map);
+        setTimeout(() => {
+          tempMarker.openPopup();
+        }, 300);
+      }
+    }, [map]);
+    return null;
+  };
+
   if (isLoading) {
     return (
       <div className="h-screen relative bg-gray-50">
@@ -133,6 +156,8 @@ const MapExplorer = () => {
         style={{ height: '100%', width: '100%' }}
         className="z-0"
       >
+        {/* Center map if lat/lng provided via query params */}
+        <MapQueryCenter />
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -235,7 +260,16 @@ const MapExplorer = () => {
       </MapContainer>
 
       {/* Layer Controls */}
-      <MapLayers layers={layers} onLayerToggle={handleLayerToggle} />
+      <MapLayers
+        layers={layers}
+        onLayerToggle={handleLayerToggle}
+        counts={{
+          hydrogen: hydrogenAssets.length,
+          renewable: renewableSources.length,
+          demand: demandCenters.length,
+          transport: transportRoutes.length,
+        }}
+      />
 
       {/* Legend */}
       <Card className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm shadow-lg z-[1000]">

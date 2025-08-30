@@ -179,20 +179,21 @@ const UserMapWorkspace: React.FC = () => {
     );
   };
 
-  const saveScenario = () => {
-    const scenario = {
-      id: Date.now(),
-      name: `Scenario ${Date.now()}`,
-      plants: placedPlants,
-      createdAt: new Date().toISOString()
-    };
-    
-    // Save to localStorage
-    const existing = JSON.parse(localStorage.getItem('scenarios') || '[]');
-    localStorage.setItem('scenarios', JSON.stringify([...existing, scenario]));
-    
-    // Show success message
-    alert('Scenario saved successfully!');
+  const saveScenario = async () => {
+    try {
+      const { api } = await import("@/lib/api");
+      const avgScore = placedPlants.length
+        ? Math.round((placedPlants.reduce((s, p) => s + (p.score || 0), 0) / placedPlants.length))
+        : 0;
+      await api.saveScenario({
+        name: `Scenario ${new Date().toLocaleString()}`,
+        notes: placedPlants.map(p => p.name).join(", "),
+        score: avgScore,
+      });
+      alert('Scenario saved to server!');
+    } catch (e: any) {
+      alert(`Save failed: ${e?.message || 'Unknown error'}`);
+    }
   };
 
   return (

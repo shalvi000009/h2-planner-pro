@@ -8,6 +8,7 @@ import MapExplorer from "./pages/MapExplorer";
 import Dashboard from "./pages/Dashboard";
 import Recommendations from "./pages/Recommendations";
 import Scenarios from "./pages/Scenarios";
+import RecommendationDetail from "./pages/RecommendationDetail";
 import Login from "./pages/Login";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
@@ -65,6 +66,7 @@ const App = () => (
             {/* Legacy direct pages (optional) */}
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/recommendations" element={<Recommendations />} />
+            <Route path="/recommendations/:id" element={<RecommendationDetail />} />
             <Route path="/scenarios" element={<Scenarios />} />
 
             {/* Catch-all */}

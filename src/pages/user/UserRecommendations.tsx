@@ -446,7 +446,20 @@ const UserRecommendations: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Button className="w-full">
+                  <Button className="w-full" onClick={async () => {
+                    try {
+                      const { api } = await import("@/lib/api");
+                      if (!selectedSite) return;
+                      await api.saveScenario({
+                        name: selectedSite.name,
+                        notes: `${selectedSite.location} • ${selectedSite.capacity} MW` ,
+                        score: selectedSite.overallScore,
+                      });
+                      alert('Saved scenario to server');
+                    } catch (e: any) {
+                      alert(`Save failed: ${e?.message || 'Unknown error'}`);
+                    }
+                  }}>
                     <Save className="h-4 w-4 mr-2" />
                     Save as Scenario
                   </Button>

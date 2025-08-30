@@ -91,11 +91,25 @@ const Scenarios = () => {
     });
   };
 
-  const handleSave = () => {
-    toast({
-      title: "Scenario Saved",
-      description: "Your scenario has been saved successfully.",
-    });
+  const handleSave = async () => {
+    try {
+      const { api } = await import("@/lib/api");
+      const sustainabilityScore = Math.min(100, placedItems.length * 15);
+      await api.saveScenario({
+        name: `Scenario ${new Date().toLocaleString()}`,
+        notes: placedItems.map(p => p.type).join(", "),
+        score: sustainabilityScore,
+      });
+      toast({
+        title: "Scenario Saved",
+        description: "Your scenario has been saved to the server.",
+      });
+    } catch (e: any) {
+      toast({
+        title: "Save failed",
+        description: e?.message || "Could not save scenario.",
+      });
+    }
   };
 
   const handleShare = () => {

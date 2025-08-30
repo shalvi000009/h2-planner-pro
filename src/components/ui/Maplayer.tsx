@@ -22,9 +22,10 @@ type LayerKey = keyof LayerState;
 interface LayerControlsProps {
   layers: LayerState;
   onLayerToggle: (layer: LayerKey) => void;
+  counts: { hydrogen: number; renewable: number; demand: number; transport: number };
 }
 
-const MapLayers = ({ layers, onLayerToggle }: LayerControlsProps) => {
+const MapLayers = ({ layers, onLayerToggle, counts }: LayerControlsProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const layerConfig = [
@@ -34,7 +35,7 @@ const MapLayers = ({ layers, onLayerToggle }: LayerControlsProps) => {
       icon: Factory,
       color: 'bg-green-500',
       description: 'Plants, storage, pipelines, hubs',
-      count: 4
+      count: counts.hydrogen,
     },
     {
       key: 'renewable' as const,
@@ -42,7 +43,7 @@ const MapLayers = ({ layers, onLayerToggle }: LayerControlsProps) => {
       icon: Zap,
       color: 'bg-yellow-500',
       description: 'Solar, wind, hydro facilities',
-      count: 4
+      count: counts.renewable,
     },
     {
       key: 'demand' as const,
@@ -50,7 +51,7 @@ const MapLayers = ({ layers, onLayerToggle }: LayerControlsProps) => {
       icon: MapPin,
       color: 'bg-red-500',
       description: 'Cities, industrial areas, ports',
-      count: 4
+      count: counts.demand,
     },
     {
       key: 'transport' as const,
@@ -58,7 +59,7 @@ const MapLayers = ({ layers, onLayerToggle }: LayerControlsProps) => {
       icon: Truck,
       color: 'bg-blue-500',
       description: 'Roads, rail, shipping lanes',
-      count: 3
+      count: counts.transport,
     }
   ];
 

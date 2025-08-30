@@ -6,9 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, TrendingUp, Zap, DollarSign, Target, Download, Filter } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Recommendations = () => {
   const [filterScore, setFilterScore] = useState("all");
+  const navigate = useNavigate();
 
   const recommendations = [
     {
@@ -243,11 +245,28 @@ const Recommendations = () => {
 
                 {/* Actions */}
                 <div className="flex gap-2 pt-4">
-                  <Button variant="outline" size="sm" className="flex-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => {
+                      // Navigate to map and pass coordinates via query params
+                      const { lat, lng } = rec.coordinates;
+                      navigate(`/map?lat=${lat}&lng=${lng}&label=${encodeURIComponent(rec.location)}`);
+                    }}
+                  >
                     <MapPin className="h-4 w-4 mr-2" />
                     View on Map
                   </Button>
-                  <Button variant="default" size="sm" className="flex-1">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => {
+                      // Navigate to detailed analysis with the full record in state
+                      navigate(`/recommendations/${rec.id}`, { state: { rec } });
+                    }}
+                  >
                     <TrendingUp className="h-4 w-4 mr-2" />
                     Detailed Analysis
                   </Button>
