@@ -67,6 +67,10 @@
     --chart-3: 134 31% 70%;
     --chart-4: 180 35% 50%;
     --chart-5: 160 30% 45%;
+    
+    /* Custom colors for new panels */
+    --neon-green: 120 100% 50%;
+    --navy: 220 50% 20%;
   }
 
   .light {
@@ -177,5 +181,39 @@
     to {
       box-shadow: 0 0 20px hsl(var(--primary) / 0.6);
     }
+  }
+
+  /* Custom color utilities */
+  .bg-neon-green {
+    background-color: hsl(var(--neon-green));
+  }
+
+  .text-neon-green {
+    color: hsl(var(--neon-green));
+  }
+
+  .border-neon-green {
+    border-color: hsl(var(--neon-green));
+  }
+
+  .bg-navy {
+    background-color: hsl(var(--navy));
+  }
+
+  .text-navy {
+    color: hsl(var(--navy));
+  }
+
+  /* Glassmorphism utilities */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 }

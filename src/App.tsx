@@ -12,6 +12,12 @@ import Login from "./pages/Login";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
+// User Panel Pages
+import UserDashboard from "./pages/user/UserDashboard";
+
+// Admin Panel Pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+
 // User/Admin route shells
 import UserApp from "./pages/UserApp";
 import AdminApp from "./pages/AdminApp";
