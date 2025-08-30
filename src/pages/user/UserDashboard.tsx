@@ -1,166 +1,264 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Leaf, Users, Target, DollarSign, Bell, TrendingUp, Activity } from "lucide-react";
-import Sidebar from "@/components/shared/Sidebar";
-import Topbar from "@/components/shared/Topbar";
-import KPICard from "@/components/shared/KPICard";
-import ImpactChart from "@/components/shared/ImpactChart";
-import Gauge from "@/components/shared/Gauge";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { userKPIs, impactData, notifications } from "@/data/userData";
+import { Sidebar } from "@/components/layout/PanelShell";
+import PanelShell from "@/components/layout/PanelShell";
+import { motion } from "framer-motion";
+import { Activity, Leaf, Users, Zap, TrendingUp, AlertCircle, CheckCircle, Clock, Bell, Map } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
+
+// Sample data for decarbonization progress
+const decarbonizationData = [
+  { month: 'Jan', progress: 45, target: 100 },
+  { month: 'Feb', progress: 52, target: 100 },
+  { month: 'Mar', progress: 58, target: 100 },
+  { month: 'Apr', progress: 62, target: 100 },
+  { month: 'May', progress: 67, target: 100 },
+  { month: 'Jun', progress: 71, target: 100 },
+  { month: 'Jul', progress: 75, target: 100 },
+  { month: 'Aug', progress: 78, target: 100 },
+  { month: 'Sep', progress: 82, target: 100 },
+  { month: 'Oct', progress: 85, target: 100 },
+  { month: 'Nov', progress: 88, target: 100 },
+  { month: 'Dec', progress: 92, target: 100 },
+];
+
+const notifications = [
+  {
+    id: 1,
+    type: 'success',
+    title: 'New site recommendation available',
+    message: 'AI has identified 3 new optimal locations for hydrogen plants',
+    time: '2 hours ago',
+    icon: CheckCircle
+  },
+  {
+    id: 2,
+    type: 'warning',
+    title: 'Infrastructure update required',
+    message: 'Grid capacity analysis shows potential bottlenecks in Region A',
+    time: '4 hours ago',
+    icon: AlertCircle
+  },
+  {
+    id: 3,
+    type: 'info',
+    title: 'Collaboration invitation',
+    message: 'Sarah Chen invited you to review Scenario "Coastal Expansion"',
+    time: '1 day ago',
+    icon: Clock
+  },
+  {
+    id: 4,
+    type: 'success',
+    title: 'Impact milestone reached',
+    message: 'Your projects have collectively saved 1M tons of CO₂',
+    time: '2 days ago',
+    icon: CheckCircle
+  }
+];
+
+const kpis = [
+  { 
+    label: "CO₂ Saved", 
+    value: "2.1M t", 
+    change: "+12%",
+    icon: <Leaf className="h-4 w-4" />, 
+    color: "from-emerald-400 to-emerald-600",
+    description: "Total carbon dioxide emissions avoided"
+  },
+  { 
+    label: "Jobs Created", 
+    value: "15.3k", 
+    change: "+8%",
+    icon: <Users className="h-4 w-4" />, 
+    color: "from-sky-400 to-sky-600",
+    description: "Employment opportunities generated"
+  },
+  { 
+    label: "Net-Zero Progress", 
+    value: "62%", 
+    change: "+5%",
+    icon: <Zap className="h-4 w-4" />, 
+    color: "from-amber-400 to-amber-600",
+    description: "Progress toward carbon neutrality"
+  },
+  { 
+    label: "Investment Optimized", 
+    value: "$1.2B", 
+    change: "+15%",
+    icon: <TrendingUp className="h-4 w-4" />, 
+    color: "from-purple-400 to-purple-600",
+    description: "Capital efficiency improvements"
+  }
+];
 
 const UserDashboard: React.FC = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const iconMap = {
-    Leaf,
-    Users,
-    Target,
-    DollarSign,
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-900 via-amber-900 to-navy-900">
-      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} variant="user" />
-      
-      <div className="lg:ml-80">
-        <Topbar onMenuToggle={() => setSidebarOpen(!sidebarOpen)} variant="user" />
-        
-        <main className="p-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-8"
-          >
-            <h1 className="text-3xl font-bold text-white mb-2">User Dashboard</h1>
-            <p className="text-white/70">
-              Real-time insights into hydrogen infrastructure and sustainability metrics
-            </p>
-          </motion.div>
+    <PanelShell
+      title="User Dashboard"
+      sidebar={<Sidebar items={[
+        { label: "Dashboard", href: "/user/dashboard", icon: "activity" },
+        { label: "Map Workspace", href: "/user/map", icon: "map" },
+        { label: "Recommendations", href: "/user/recommendations", icon: "trending-up" },
+        { label: "Impact", href: "/user/impact", icon: "target" },
+        { label: "Collaboration", href: "/user/collaboration", icon: "users" },
+      ]} />}
+    >
+      <div className="space-y-6">
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {kpis.map((kpi, i) => (
+            <motion.div 
+              key={i} 
+              initial={{ opacity: 0, y: 16 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: i * 0.1 }}
+            >
+              <Card className="bg-card/50 backdrop-blur-sm border border-border hover:shadow-lg transition-all duration-300">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${kpi.color} text-white flex items-center justify-center`}>
+                      {kpi.icon}
+                    </div>
+                    <Badge variant="secondary" className="text-xs">
+                      {kpi.change}
+                    </Badge>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">{kpi.label}</p>
+                    <p className="text-2xl font-bold text-foreground">{kpi.value}</p>
+                    <p className="text-xs text-muted-foreground">{kpi.description}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
 
-          {/* KPI Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {userKPIs.map((kpi, index) => (
-              <KPICard
-                key={kpi.title}
-                title={kpi.title}
-                value={kpi.value}
-                unit={kpi.unit}
-                change={kpi.change}
-                icon={iconMap[kpi.icon as keyof typeof iconMap]}
-                color={kpi.color}
-                delay={index * 0.1}
-              />
-            ))}
-          </div>
-
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <ImpactChart
-              data={impactData}
-              type="line"
-              title="CO₂ Reduction Progress"
-              xKey="year"
-              yKey="co2"
-              color="#10b981"
-              height={300}
-            />
-            
-            <ImpactChart
-              data={impactData}
-              type="area"
-              title="Jobs Created Over Time"
-              xKey="year"
-              yKey="jobs"
-              color="#3b82f6"
-              height={300}
-            />
-          </div>
-
-          {/* Bottom Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Net-Zero Gauge */}
-            <div className="lg:col-span-1">
-              <Gauge
-                value={78}
-                title="Net-Zero Alignment"
-                unit="%"
-                size={250}
-              />
-            </div>
-
-            {/* Notifications */}
-            <div className="lg:col-span-2">
-              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border-white/20 p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-white flex items-center space-x-2">
-                    <Bell className="h-5 w-5" />
-                    <span>Recent Notifications</span>
-                  </h3>
-                  <Button variant="outline" size="sm" className="text-white border-white/20 hover:bg-white/10">
-                    View All
-                  </Button>
+        {/* Charts and Notifications Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Decarbonization Progress Chart */}
+          <div className="lg:col-span-2">
+            <Card className="bg-card/50 backdrop-blur-sm border border-border">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5" />
+                  Decarbonization Progress
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={decarbonizationData}>
+                      <defs>
+                        <linearGradient id="progressGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(160 100% 41%)" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(160 100% 41%)" stopOpacity={0.1}/>
+                        </linearGradient>
+                        <linearGradient id="targetGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(203 89% 53%)" stopOpacity={0.1}/>
+                          <stop offset="95%" stopColor="hsl(203 89% 53%)" stopOpacity={0.05}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
+                      <YAxis stroke="hsl(var(--muted-foreground))" />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'hsl(var(--card))', 
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '8px'
+                        }}
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="progress" 
+                        stroke="hsl(160 100% 41%)" 
+                        strokeWidth={2}
+                        fill="url(#progressGradient)"
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="target" 
+                        stroke="hsl(203 89% 53%)" 
+                        strokeWidth={1}
+                        strokeDasharray="5 5"
+                        fill="url(#targetGradient)"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
-                
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Notifications Panel */}
+          <div className="lg:col-span-1">
+            <Card className="bg-card/50 backdrop-blur-sm border border-border h-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Bell className="h-5 w-5" />
+                  Smart Alerts
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-4">
                   {notifications.map((notification, index) => (
                     <motion.div
                       key={notification.id}
-                      initial={{ opacity: 0, x: -20 }}
+                      initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="flex items-start space-x-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                      className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
                     >
-                      <div className={`w-2 h-2 rounded-full mt-2 ${
-                        notification.unread ? "bg-neon-green" : "bg-white/40"
-                      }`} />
-                      <div className="flex-1">
-                        <p className="text-white text-sm">{notification.message}</p>
-                        <p className="text-white/60 text-xs mt-1">{notification.time}</p>
+                      <div className={`mt-1 p-1 rounded-full ${
+                        notification.type === 'success' ? 'bg-emerald-100 text-emerald-600' :
+                        notification.type === 'warning' ? 'bg-amber-100 text-amber-600' :
+                        'bg-blue-100 text-blue-600'
+                      }`}>
+                        <notification.icon className="h-3 w-3" />
                       </div>
-                      {notification.unread && (
-                        <Badge className="bg-neon-green text-black text-xs">
-                          New
-                        </Badge>
-                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground">{notification.title}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{notification.message}</p>
+                        <p className="text-xs text-muted-foreground mt-2">{notification.time}</p>
+                      </div>
                     </motion.div>
                   ))}
                 </div>
-              </Card>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-            className="mt-8"
-          >
-            <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border-white/20 p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Button className="bg-gradient-to-r from-teal-500 to-amber-500 hover:from-teal-600 hover:to-amber-600 text-white">
-                  <TrendingUp className="mr-2 h-4 w-4" />
-                  View Recommendations
+                <Button variant="outline" size="sm" className="w-full mt-4">
+                  View All Notifications
                 </Button>
-                <Button variant="outline" className="border-white/20 text-white hover:bg-white/10">
-                  <Activity className="mr-2 h-4 w-4" />
-                  Create Scenario
-                </Button>
-                <Button variant="outline" className="border-white/20 text-white hover:bg-white/10">
-                  <Users className="mr-2 h-4 w-4" />
-                  Join Collaboration
-                </Button>
-              </div>
+              </CardContent>
             </Card>
-          </motion.div>
-        </main>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <Card className="bg-card/50 backdrop-blur-sm border border-border">
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Button variant="outline" className="h-16 flex flex-col gap-2">
+                <Map className="h-5 w-5" />
+                <span>Open Map Workspace</span>
+              </Button>
+              <Button variant="outline" className="h-16 flex flex-col gap-2">
+                <TrendingUp className="h-5 w-5" />
+                <span>View Recommendations</span>
+              </Button>
+              <Button variant="outline" className="h-16 flex flex-col gap-2">
+                <Users className="h-5 w-5" />
+                <span>Start Collaboration</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </PanelShell>
   );
 };
 
