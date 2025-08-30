@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,8 +7,15 @@
 
 @layer base {
   :root {
+<<<<<<< Updated upstream
     /* Core Colors - Hydrogen Green Theme */
     --background: 220 50% 20%; /* Slate Grey #2f3e46 */
+=======
+  /* Background gradient token */
+  --bg-grad-1: linear-gradient(180deg, rgba(14,37,60,0.9) 0%, rgba(6,26,40,0.8) 100%);
+    /* Core Colors - Emerald Theme */
+    --background: 192 39% 12%;
+>>>>>>> Stashed changes
     --foreground: 150 40% 96%;
 
     /* Card backgrounds with glassmorphism */
@@ -117,6 +125,11 @@
     @apply border-border;
   }
 
+  /* Ensure full-height root for layout  */
+  html, body, #root {
+    height: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -146,6 +159,21 @@
   .glow-primary {
     box-shadow: var(--shadow-glow);
   }
+
+  /* glass card */
+  .card-glass {
+    @apply bg-white/6 backdrop-blur-md rounded-2xl p-4 shadow-glass border border-white/6;
+  }
+
+  /* primary button */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold;
+    background-image: linear-gradient(90deg, #00d084, #1da1f2);
+    box-shadow: 0 6px 20px rgba(0,208,132,0.12), 0 1px 0 rgba(255,255,255,0.03) inset;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,208,132,0.16); }
+  .btn-primary:active { transform: translateY(0); }
 
   .text-glow {
     text-shadow: 0 0 20px currentColor;
