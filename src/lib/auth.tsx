@@ -22,7 +22,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const raw = localStorage.getItem("h2_auth");
     if (raw) {
-      try { setUser(JSON.parse(raw)); } catch {}
+      try { setUser(JSON.parse(raw)); } catch {
+        // Reset to unauthenticated if stored JSON is invalid
+        setUser(null);
+      }
     }
   }, []);
 

@@ -7,15 +7,10 @@
 
 @layer base {
   :root {
-<<<<<<< Updated upstream
+    /* Background gradient token */
+    --bg-grad-1: linear-gradient(180deg, rgba(14,37,60,0.9) 0%, rgba(6,26,40,0.8) 100%);
     /* Core Colors - Hydrogen Green Theme */
     --background: 220 50% 20%; /* Slate Grey #2f3e46 */
-=======
-  /* Background gradient token */
-  --bg-grad-1: linear-gradient(180deg, rgba(14,37,60,0.9) 0%, rgba(6,26,40,0.8) 100%);
-    /* Core Colors - Emerald Theme */
-    --background: 192 39% 12%;
->>>>>>> Stashed changes
     --foreground: 150 40% 96%;
 
     /* Card backgrounds with glassmorphism */
