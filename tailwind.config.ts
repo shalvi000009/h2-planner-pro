@@ -1,5 +1,7 @@
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
+import forms from "@tailwindcss/forms";
+import typography from "@tailwindcss/typography";
 
 export default {
 	darkMode: ["class"],
@@ -19,7 +21,26 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ["Inter", "system-ui", "sans-serif"],
+			},
 			colors: {
+				hydrogen: {
+					50: '#E8FBF2',
+					100: '#CFF6E5',
+					300: '#66E6B7',
+					500: '#00d084', // main hydrogen green
+					700: '#00b36a'
+				},
+				sky: {
+					500: '#1da1f2'
+				},
+				slate: {
+					700: '#2f3e46'
+				},
+				amber: {
+					400: '#ffb703'
+				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -95,5 +116,5 @@ export default {
 			}
 		}
 	},
-	plugins: [tailwindcssAnimate],
+	plugins: [forms, typography, tailwindcssAnimate],
 } satisfies Config;
