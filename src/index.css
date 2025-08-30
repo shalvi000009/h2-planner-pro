@@ -6,54 +6,54 @@
 
 @layer base {
   :root {
-    /* Core Colors - Emerald Theme */
-    --background: 192 39% 12%;
+    /* Core Colors - Hydrogen Green Theme */
+    --background: 220 50% 20%; /* Slate Grey #2f3e46 */
     --foreground: 150 40% 96%;
 
-    /* Card backgrounds with subtle transparency */
-    --card: 190 35% 15%;
+    /* Card backgrounds with glassmorphism */
+    --card: 220 50% 25%;
     --card-foreground: 150 40% 96%;
 
-    --popover: 192 39% 12%;
+    --popover: 220 50% 20%;
     --popover-foreground: 150 40% 96%;
 
-    /* Primary - Dark Teal */
-    --primary: 192 39% 22%;
+    /* Primary - Hydrogen Green #00d084 */
+    --primary: 160 100% 41%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 192 39% 35%;
+    --primary-glow: 160 100% 50%;
 
-    /* Secondary - Emerald Green */
-    --secondary: 134 31% 55%;
+    /* Secondary - Sky Blue #1da1f2 */
+    --secondary: 203 89% 53%;
     --secondary-foreground: 0 0% 100%;
-    --secondary-glow: 134 31% 65%;
+    --secondary-glow: 203 89% 63%;
+
+    /* Accent - Warm Amber #ffb703 */
+    --accent: 43 100% 51%;
+    --accent-foreground: 220 50% 20%;
 
     /* Muted for subtle elements */
-    --muted: 190 30% 18%;
+    --muted: 220 30% 25%;
     --muted-foreground: 180 20% 65%;
-
-    /* Accent - Light Green */
-    --accent: 134 31% 70%;
-    --accent-foreground: 192 39% 12%;
 
     /* System colors */
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 190 25% 20%;
-    --input: 190 25% 20%;
-    --ring: 192 39% 35%;
+    --border: 220 25% 30%;
+    --input: 220 25% 30%;
+    --ring: 160 100% 50%;
 
     --radius: 0.75rem;
 
     /* Custom Design Tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
-    --gradient-energy: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
-    --gradient-hero: linear-gradient(180deg, hsl(192 39% 12%), hsl(190 35% 15%));
-    --gradient-card: linear-gradient(180deg, hsl(190 35% 15% / 0.8), hsl(190 35% 13% / 0.9));
+    --gradient-primary: linear-gradient(135deg, hsl(160 100% 41%), hsl(160 100% 50%));
+    --gradient-secondary: linear-gradient(135deg, hsl(203 89% 53%), hsl(203 89% 63%));
+    --gradient-energy: linear-gradient(135deg, hsl(160 100% 41%), hsl(203 89% 53%));
+    --gradient-hero: linear-gradient(180deg, hsl(220 50% 20%), hsl(220 50% 25%));
+    --gradient-card: linear-gradient(180deg, hsl(220 50% 25% / 0.8), hsl(220 50% 20% / 0.9));
     
     /* Shadows */
-    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.3);
+    --shadow-glow: 0 0 40px hsl(160 100% 50% / 0.3);
     --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.3);
     --shadow-hover: 0 8px 30px hsl(0 0% 0% / 0.4);
     
@@ -62,49 +62,53 @@
     --animation-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
     /* Chart colors */
-    --chart-1: 192 39% 22%;
-    --chart-2: 134 31% 55%;
-    --chart-3: 134 31% 70%;
+    --chart-1: 160 100% 41%;
+    --chart-2: 203 89% 53%;
+    --chart-3: 43 100% 51%;
     --chart-4: 180 35% 50%;
     --chart-5: 160 30% 45%;
+    
+    /* Custom colors for new panels */
+    --neon-green: 160 100% 50%;
+    --navy: 220 50% 20%;
   }
 
   .light {
     --background: 0 0% 98%;
-    --foreground: 192 39% 12%;
+    --foreground: 220 50% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 192 39% 12%;
+    --card-foreground: 220 50% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 192 39% 12%;
+    --popover-foreground: 220 50% 20%;
 
-    --primary: 192 39% 22%;
+    --primary: 160 100% 41%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 192 39% 35%;
+    --primary-glow: 160 100% 50%;
 
-    --secondary: 134 31% 45%;
+    --secondary: 203 89% 53%;
     --secondary-foreground: 0 0% 100%;
-    --secondary-glow: 134 31% 55%;
+    --secondary-glow: 203 89% 63%;
 
-    --muted: 180 20% 96%;
-    --muted-foreground: 190 16% 47%;
+    --accent: 43 100% 51%;
+    --accent-foreground: 220 50% 20%;
 
-    --accent: 134 31% 85%;
-    --accent-foreground: 192 39% 12%;
+    --muted: 220 20% 96%;
+    --muted-foreground: 220 16% 47%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 190 20% 91%;
-    --input: 190 20% 91%;
-    --ring: 192 39% 35%;
+    --border: 220 20% 91%;
+    --input: 220 20% 91%;
+    --ring: 160 100% 50%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
-    --gradient-energy: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 98%), hsl(180 20% 96%));
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(180 20% 98%));
+    --gradient-primary: linear-gradient(135deg, hsl(160 100% 41%), hsl(160 100% 50%));
+    --gradient-secondary: linear-gradient(135deg, hsl(203 89% 53%), hsl(203 89% 63%));
+    --gradient-energy: linear-gradient(135deg, hsl(160 100% 41%), hsl(203 89% 53%));
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 98%), hsl(220 20% 96%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 20% 98%));
   }
 }
 
@@ -177,5 +181,39 @@
     to {
       box-shadow: 0 0 20px hsl(var(--primary) / 0.6);
     }
+  }
+
+  /* Custom color utilities */
+  .bg-neon-green {
+    background-color: hsl(var(--neon-green));
+  }
+
+  .text-neon-green {
+    color: hsl(var(--neon-green));
+  }
+
+  .border-neon-green {
+    border-color: hsl(var(--neon-green));
+  }
+
+  .bg-navy {
+    background-color: hsl(var(--navy));
+  }
+
+  .text-navy {
+    color: hsl(var(--navy));
+  }
+
+  /* Glassmorphism utilities */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 }
