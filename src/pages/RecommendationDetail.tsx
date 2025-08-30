@@ -76,9 +76,15 @@ const RecommendationDetail = () => {
                     variant="outline"
                     className="w-full"
                     onClick={() => {
-                      const { lat, lng } = rec.coordinates || {};
-                      if (lat && lng) {
-                        navigate(`/map?lat=${lat}&lng=${lng}&label=${encodeURIComponent(rec.location)}`);
+                      const latNum = Number(rec?.coordinates?.lat);
+                      const lngNum = Number(rec?.coordinates?.lng);
+                      if (Number.isFinite(latNum) && Number.isFinite(lngNum)) {
+                        const params = new URLSearchParams({
+                          lat: String(latNum),
+                          lng: String(lngNum),
+                          label: rec?.location ? String(rec.location) : "",
+                        });
+                        navigate(`/map?${params.toString()}`);
                       }
                     }}
                   >

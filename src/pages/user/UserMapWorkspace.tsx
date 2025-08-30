@@ -30,7 +30,7 @@ import Map, { Source, Layer, Marker, NavigationControl, Popup } from 'react-map-
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 // Set your Mapbox access token (load from Vite env)
-const MAPBOX_TOKEN = (import.meta as any).env?.VITE_MAPBOX_TOKEN || "";
+ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || "";
 
 interface Site {
   id: string;
@@ -58,24 +58,20 @@ interface LayerToggle {
 
 // Client-side pseudo-data
 const renewableSites: Site[] = [
-  { id: "r1", name: "Wind Farm Alpha", coordinates: [-74.0060, 40.7128], type: 'renewable', capacity: 100 },
-  { id: "r2", name: "Solar Valley", coordinates: [-118.2437, 34.0522], type: 'renewable', capacity: 75 },
-  { id: "r3", name: "Hydro Dam Beta", coordinates: [-122.3321, 47.6062], type: 'renewable', capacity: 120 },
-  { id: "r4", name: "Geothermal Plant", coordinates: [-87.6298, 41.8781], type: 'renewable', capacity: 50 },
+  { id: "r1", name: "Wind Farm Alpha",   coordinates: [-74.0060, 40.7128], type: 'renewable', capacity: 100 },
+  { id: "r2", name: "Solar Valley",       coordinates: [-115.1398, 36.1699], type: 'renewable', capacity: 75 },
+  { id: "r3", name: "Hydro Dam Beta",     coordinates: [-124.2026, 41.7558], type: 'renewable', capacity: 120 },
+  { id: "r4", name: "Geothermal Plant",   coordinates: [-89.3985, 43.0731], type: 'renewable', capacity: 50 },
 ];
 
 const demandCenters: Site[] = [
-  { id: "d1", name: "Metro Area A", coordinates: [-74.0060, 40.7128], type: 'demand', demand: 1500 },
-  { id: "d2", name: "Industrial Zone B", coordinates: [-118.2437, 34.0522], type: 'demand', demand: 2200 },
-  { id: "d3", name: "Port City C", coordinates: [-122.3321, 47.6062], type: 'demand', demand: 1800 },
-  { id: "d4", name: "Tech Hub D", coordinates: [-87.6298, 41.8781], type: 'demand', demand: 1200 },
+  { id: "d1", name: "Metro City", coordinates: [-87.6298, 41.8781], type: 'demand', demand: 200 },
+  { id: "d2", name: "Industrial Hub", coordinates: [-95.3698, 29.7604], type: 'demand', demand: 150 },
 ];
 
 const transportHubs: Site[] = [
-  { id: "t1", name: "Pipeline Junction", coordinates: [-74.0060, 40.7128], type: 'transport' },
-  { id: "t2", name: "Rail Terminal", coordinates: [-118.2437, 34.0522], type: 'transport' },
-  { id: "t3", name: "Port Facility", coordinates: [-122.3321, 47.6062], type: 'transport' },
-  { id: "t4", name: "Highway Hub", coordinates: [-87.6298, 41.8781], type: 'transport' },
+  { id: "t1", name: "Rail Terminal", coordinates: [-80.1918, 25.7617], type: 'transport' },
+  { id: "t2", name: "Port Facility", coordinates: [-122.3321, 47.6062], type: 'transport' },
 ];
 
 const UserMapWorkspace: React.FC = () => {
@@ -124,7 +120,9 @@ const UserMapWorkspace: React.FC = () => {
     const proxRenew = 1 / (1 + distToNearestRenewable * 10); // Scale factor for demo
     const demandScore = Math.min(1, localDemand / 1000);
     const transportScore = 1 / (1 + distToNearestTransport * 10);
-    const regulationPenalty = Math.random() > 0.1 ? 1 : 0.2; // 10% chance of protected zone
+    // Define protected zones or use location-based rules
+    const isProtectedZone = false; // TODO: Implement actual zone checking
+    const regulationPenalty = isProtectedZone ? 0.2 : 1;
 
     const raw = (0.45 * proxRenew) + (0.35 * demandScore) + (0.2 * transportScore);
     const finalScore = Math.round(raw * 100 * regulationPenalty);
@@ -185,12 +183,19 @@ const UserMapWorkspace: React.FC = () => {
       const avgScore = placedPlants.length
         ? Math.round((placedPlants.reduce((s, p) => s + (p.score || 0), 0) / placedPlants.length))
         : 0;
-      await api.saveScenario({
+
+      const scenarioData = {
         name: `Scenario ${new Date().toLocaleString()}`,
-        notes: placedPlants.map(p => p.name).join(", "),
+        description: `Map scenario with ${placedPlants.length} plants`,
+        notes: placedPlants.map(p => `${p.name} (Score: ${p.score})`).join(", "),
         score: avgScore,
-      });
-      alert('Scenario saved to server!');
+        mapCenter: viewState,
+        plants: placedPlants,
+        timestamp: new Date().toISOString()
+      };
+
+      await api.saveScenario(scenarioData);
+      alert('Scenario saved to database!');
     } catch (e: any) {
       alert(`Save failed: ${e?.message || 'Unknown error'}`);
     }
@@ -201,8 +206,6 @@ const UserMapWorkspace: React.FC = () => {
       title="Map Workspace"
       sidebar={<Sidebar items={[
         { label: "Dashboard", href: "/user/dashboard", icon: "activity" },
-        { label: "Map Workspace", href: "/user/map", icon: "map" },
-        { label: "Recommendations", href: "/user/recommendations", icon: "trending-up" },
         { label: "Impact", href: "/user/impact", icon: "target" },
         { label: "Collaboration", href: "/user/collaboration", icon: "users" },
       ]} />}

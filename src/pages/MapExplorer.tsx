@@ -18,28 +18,43 @@ import {
 } from '@/data/mapData';
 import 'leaflet/dist/leaflet.css';
 
-// Fix for default markers in react-leaflet
+// Fix for default markers in react-leaflet (no-op if not present)
+if ('_getIconUrl' in Icon.Default.prototype) {
+  try {
+    delete (Icon.Default.prototype as any)._getIconUrl;
+  } catch (e) {
+    // Ignore if property is not configurable
+    console.warn('Could not delete _getIconUrl:', e);
+  }
+}
 
-delete (Icon.Default.prototype as any)._getIconUrl;
-Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
+// Create a custom SVG-based Leaflet icon
+const createCustomIcon = (color: string, symbol: string) => {
+  // Sanitize the symbol to prevent XSS in the embedded SVG
+  const sanitizedSymbol = symbol.replace(/[<>"'&]/g, (char) => {
+    const entities: Record<string, string> = {
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+      '&': '&amp;',
+    };
+    return entities[char] || char;
+  });
 
-// Custom icons for different asset types
-const createCustomIcon = (color: string, symbol: string) => new Icon({
-  iconUrl: `data:image/svg+xml;base64,${btoa(`
-    <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12.5 0C5.6 0 0 5.6 0 12.5S12.5 41 12.5 41 25 19.4 25 12.5 19.4 0 12.5 0z" fill="${color}"/>
-      <circle cx="12.5" cy="12.5" r="8" fill="white"/>
-      <text x="12.5" y="17" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="${color}">${symbol}</text>
-    </svg>
-  `)}`,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-});
+  return new Icon({
+    iconUrl: `data:image/svg+xml;base64,${btoa(`
+      <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.5 0C5.6 0 0 5.6 0 12.5S12.5 41 12.5 41 25 19.4 25 12.5 19.4 0 12.5 0z" fill="${color}"/>
+        <circle cx="12.5" cy="12.5" r="8" fill="white"/>
+        <text x="12.5" y="17" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="${color}">${sanitizedSymbol}</text>
+      </svg>
+    `)}`,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
+};
 
 const icons = {
   hydrogen: {
@@ -57,8 +72,10 @@ const icons = {
     city: createCustomIcon('#ef4444', 'C'),
     industrial: createCustomIcon('#dc2626', 'I'),
     port: createCustomIcon('#b91c1c', 'P'),
-  }
+  },
 };
+
+type BadgeVariant = 'default' | 'secondary' | 'outline';
 
 const MapExplorer = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -76,24 +93,32 @@ const MapExplorer = () => {
   }, []);
 
   const handleLayerToggle = (layer: keyof typeof layers) => {
-    setLayers(prev => ({ ...prev, [layer]: !prev[layer] }));
+    setLayers((prev) => ({ ...prev, [layer]: !prev[layer] }));
   };
 
-  const getStatusBadgeVariant = (status: string) => {
+  const getStatusBadgeVariant = (status: string): BadgeVariant => {
     switch (status) {
-      case 'operational': return 'default';
-      case 'under-construction': return 'secondary';
-      case 'planned': return 'outline';
-      default: return 'outline';
+      case 'operational':
+        return 'default';
+      case 'under-construction':
+        return 'secondary';
+      case 'planned':
+        return 'outline';
+      default:
+        return 'outline';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'operational': return 'text-green-600';
-      case 'under-construction': return 'text-yellow-600';
-      case 'planned': return 'text-blue-600';
-      default: return 'text-gray-600';
+      case 'operational':
+        return 'text-green-600';
+      case 'under-construction':
+        return 'text-yellow-600';
+      case 'planned':
+        return 'text-blue-600';
+      default:
+        return 'text-gray-600';
     }
   };
 
@@ -104,7 +129,18 @@ const MapExplorer = () => {
       const params = new URLSearchParams(window.location.search);
       const lat = parseFloat(params.get('lat') || '');
       const lng = parseFloat(params.get('lng') || '');
-      const label = params.get('label') || 'Selected Location';
+      const rawLabel = params.get('label') || 'Selected Location';
+      // Sanitize the label to prevent XSS in bindPopup HTML
+      const label = rawLabel.replace(/[<>"']/g, (char) => {
+        const entities: Record<string, string> = {
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;',
+        };
+        return entities[char] || char;
+      });
+
       if (!isNaN(lat) && !isNaN(lng)) {
         const pos: LatLngExpression = [lat, lng];
         map.setView(pos, 10, { animate: true });
@@ -164,99 +200,129 @@ const MapExplorer = () => {
         />
 
         {/* Hydrogen Assets Layer */}
-        {layers.hydrogen && hydrogenAssets.map((asset: HydrogenAsset) => (
-          <Marker
-            key={asset.id}
-            position={[asset.lat, asset.lng]}
-            icon={icons.hydrogen[asset.type]}
-          >
-            <Popup className="custom-popup">
-              <div className="p-2 min-w-[250px]">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-lg text-gray-900">{asset.name}</h3>
-                  <Badge variant={getStatusBadgeVariant(asset.status)} className={getStatusColor(asset.status)}>
-                    {asset.status}
-                  </Badge>
-                </div>
-                <div className="space-y-1 text-sm">
-                  <p><span className="font-medium">Type:</span> {asset.type}</p>
-                  {asset.capacity && <p><span className="font-medium">Capacity:</span> {asset.capacity}</p>}
-                  <p className="text-gray-600 mt-2">{asset.description}</p>
-                </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
-
-        {/* Renewable Sources Layer */}
-        {layers.renewable && renewableSources.map((source: RenewableSource) => (
-          <Marker
-            key={source.id}
-            position={[source.lat, source.lng]}
-            icon={icons.renewable[source.type]}
-          >
-            <Popup>
-              <div className="p-2 min-w-[250px]">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-lg text-gray-900">{source.name}</h3>
-                  <Badge variant={getStatusBadgeVariant(source.status)} className={getStatusColor(source.status)}>
-                    {source.status}
-                  </Badge>
-                </div>
-                <div className="space-y-1 text-sm">
-                  <p><span className="font-medium">Type:</span> {source.type}</p>
-                  <p><span className="font-medium">Capacity:</span> {source.capacity}</p>
-                  <p className="text-gray-600 mt-2">{source.description}</p>
-                </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
-
-        {/* Demand Centers Layer */}
-        {layers.demand && demandCenters.map((center: DemandCenter) => (
-          <Marker
-            key={center.id}
-            position={[center.lat, center.lng]}
-            icon={icons.demand[center.type]}
-          >
-            <Popup>
-              <div className="p-2 min-w-[250px]">
-                <h3 className="font-semibold text-lg text-gray-900 mb-2">{center.name}</h3>
-                <div className="space-y-1 text-sm">
-                  <p><span className="font-medium">Type:</span> {center.type}</p>
-                  <p><span className="font-medium">Demand:</span> {center.demand}</p>
-                  <p className="text-gray-600 mt-2">{center.description}</p>
-                </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
-
-        {/* Transport Routes Layer */}
-        {layers.transport && transportRoutes.map((route: TransportRoute) => {
-          const color = route.type === 'road' ? '#3b82f6' : 
-                      route.type === 'rail' ? '#8b5cf6' : '#06b6d4';
-          return (
-            <Polyline
-              key={route.id}
-              positions={route.coordinates as LatLngExpression[]}
-              color={color}
-              weight={4}
-              opacity={0.7}
+        {layers.hydrogen &&
+          hydrogenAssets.map((asset: HydrogenAsset) => (
+            <Marker
+              key={asset.id}
+              position={[asset.lat, asset.lng]}
+              icon={icons.hydrogen[asset.type]}
             >
-              <Popup>
-                <div className="p-2">
-                  <h3 className="font-semibold text-lg text-gray-900 mb-2">{route.name}</h3>
+              <Popup className="custom-popup">
+                <div className="p-2 min-w-[250px]">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold text-lg text-gray-900">{asset.name}</h3>
+                    <Badge
+                      variant={getStatusBadgeVariant(asset.status)}
+                      className={getStatusColor(asset.status)}
+                    >
+                      {asset.status}
+                    </Badge>
+                  </div>
                   <div className="space-y-1 text-sm">
-                    <p><span className="font-medium">Type:</span> {route.type}</p>
-                    <p className="text-gray-600 mt-2">{route.description}</p>
+                    <p>
+                      <span className="font-medium">Type:</span> {asset.type}
+                    </p>
+                    {asset.capacity && (
+                      <p>
+                        <span className="font-medium">Capacity:</span> {asset.capacity}
+                      </p>
+                    )}
+                    <p className="text-gray-600 mt-2">{asset.description}</p>
                   </div>
                 </div>
               </Popup>
-            </Polyline>
-          );
-        })}
+            </Marker>
+          ))}
+
+        {/* Renewable Sources Layer */}
+        {layers.renewable &&
+          renewableSources.map((source: RenewableSource) => (
+            <Marker
+              key={source.id}
+              position={[source.lat, source.lng]}
+              icon={icons.renewable[source.type]}
+            >
+              <Popup>
+                <div className="p-2 min-w-[250px]">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold text-lg text-gray-900">{source.name}</h3>
+                    <Badge
+                      variant={getStatusBadgeVariant(source.status)}
+                      className={getStatusColor(source.status)}
+                    >
+                      {source.status}
+                    </Badge>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <p>
+                      <span className="font-medium">Type:</span> {source.type}
+                    </p>
+                    <p>
+                      <span className="font-medium">Capacity:</span> {source.capacity}
+                    </p>
+                    <p className="text-gray-600 mt-2">{source.description}</p>
+                  </div>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+
+        {/* Demand Centers Layer */}
+        {layers.demand &&
+          demandCenters.map((center: DemandCenter) => (
+            <Marker
+              key={center.id}
+              position={[center.lat, center.lng]}
+              icon={icons.demand[center.type]}
+            >
+              <Popup>
+                <div className="p-2 min-w-[250px]">
+                  <h3 className="font-semibold text-lg text-gray-900 mb-2">{center.name}</h3>
+                  <div className="space-y-1 text-sm">
+                    <p>
+                      <span className="font-medium">Type:</span> {center.type}
+                    </p>
+                    <p>
+                      <span className="font-medium">Demand:</span> {center.demand}
+                    </p>
+                    <p className="text-gray-600 mt-2">{center.description}</p>
+                  </div>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+
+        {/* Transport Routes Layer */}
+        {layers.transport &&
+          transportRoutes.map((route: TransportRoute) => {
+            const color =
+              route.type === 'road'
+                ? '#3b82f6'
+                : route.type === 'rail'
+                ? '#8b5cf6'
+                : '#06b6d4';
+            return (
+              <Polyline
+                key={route.id}
+                positions={route.coordinates as LatLngExpression[]}
+                color={color}
+                weight={4}
+                opacity={0.7}
+              >
+                <Popup>
+                  <div className="p-2">
+                    <h3 className="font-semibold text-lg text-gray-900 mb-2">{route.name}</h3>
+                    <div className="space-y-1 text-sm">
+                      <p>
+                        <span className="font-medium">Type:</span> {route.type}
+                      </p>
+                      <p className="text-gray-600 mt-2">{route.description}</p>
+                    </div>
+                  </div>
+                </Popup>
+              </Polyline>
+            );
+          })}
       </MapContainer>
 
       {/* Layer Controls */}
